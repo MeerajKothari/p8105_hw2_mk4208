@@ -8,3 +8,21 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
+```{r}
+library(tidyverse)
+library(readxl)
+```
+
+```{r}
+trashwheel = read_excel(path="./Data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
+                        sheet = 1,
+                        range ="A2:N338") %>% 
+  janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
+  mutate(sports_balls = round(sports_balls, digits = 0)) %>% 
+  mutate(sports_balls = as.integer(sports_balls))
+
+
+
+```
+

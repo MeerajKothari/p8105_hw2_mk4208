@@ -14,7 +14,8 @@ library(readxl)
 ```
 
 ```{r}
-trashwheel = read_excel(path="./Data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
+trashwheel =
+  read_excel(path="./Data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
                         sheet = 1,
                         range ="A2:N338") %>% 
   janitor::clean_names() %>% 
@@ -22,7 +23,34 @@ trashwheel = read_excel(path="./Data/HealthyHarborWaterWheelTotals2018-7-28.xlsx
   mutate(sports_balls = round(sports_balls, digits = 0)) %>% 
   mutate(sports_balls = as.integer(sports_balls))
 
+precipitation_2018 = 
+  read_excel(path="./Data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
+                        sheet = 3,
+                        range ="A2:B14") %>% 
+  janitor::clean_names()  %>%
+  drop_na(total) %>% 
+  mutate(year = 2018)
 
+precipitation_2017 = 
+  read_excel(path="./Data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
+                        sheet = 4,
+                        range ="A2:B14") %>% 
+  janitor::clean_names()  %>%
+  drop_na(total) %>% 
+  mutate(year = 2017)
 
+precipitation_full = full_join(precipitation_2017, precipitation_2018) %>% 
+  mutate(month = month.name[month])
+```
+
+```{r}
+pols_month = read_csv("./Data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  separate(mon, c("year", "month", "day"), convert = TRUE) %>% 
+  mutate(month = month.name[month]) %>% 
+  pivot_longer(
+    c("prez_dem", "prez_gop"),
+    names_to = "president",
+    names_prefix = "prez_") %>% 
+  select(-day)
 ```
 

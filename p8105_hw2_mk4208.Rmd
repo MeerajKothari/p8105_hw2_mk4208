@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ##### Loading required packages 
 
-```{r}
+```{r message=FALSE}
 library(tidyverse)
 library(readxl)
 ```
@@ -68,7 +68,7 @@ precipitation_2017 =
 
 Precipitation data for 2018 and 2017 have been merged and month name has been converted to a character variable. 
 
-```{r}
+```{r message=FALSE}
 precipitation_full = full_join(precipitation_2017, precipitation_2018) %>% 
   mutate(month = month.name[month])
 ```
@@ -87,7 +87,7 @@ precipitation_full = full_join(precipitation_2017, precipitation_2018) %>%
 The month variable is separated into "year", "month" and "day". A new variable "President" has been added taking values from prez_dem and prez_gop. The values of the month variable have been converted to characters. Day variable has been removed. 
 
 
-```{r}
+```{r message=FALSE}
 pols = read_csv("./Data/fivethirtyeight_datasets/pols-month.csv") %>% 
   separate(mon,
     c("year", "month", "day"), 
@@ -112,7 +112,7 @@ pols = read_csv("./Data/fivethirtyeight_datasets/pols-month.csv") %>%
 ### For the `snp` dataset:
 The date variable is separated into "month", "day" and "year". The values of the month variable have been converted to characters. The year and month variables have been rearranged. Day variable has been removed. 
 
-```{r}
+```{r message=FALSE}
 snp = read_csv("./Data/fivethirtyeight_datasets/snp.csv") %>% 
   separate(date, 
            c("month", "day", "year"),
@@ -129,13 +129,13 @@ snp = read_csv("./Data/fivethirtyeight_datasets/snp.csv") %>%
 ### For the `unemployment` dataset:
 A new variable month has been created taking values from the Jan to Dec column names. The month variable has been formatted to character variable using month,name. Year variable has been converted to integer.  
 
-```{r}
+```{r message=FALSE}
 unemployment = read_csv("./Data/fivethirtyeight_datasets/unemployment.csv") %>% 
   pivot_longer(Jan:Dec, 
     names_to = "month",
     values_to = "rate"
   ) %>% 
-  mutate(month = match(month, month.abb)) %>% 
+  mutate(month = match(month, month.abb)) %>%
   mutate(month = month.name[month]) %>%
   mutate(Year = as.integer(Year)) %>%
   janitor::clean_names()
@@ -153,12 +153,9 @@ The following code chunk merges `snp` into `pols` and then `unexmployment` into 
 ```{r}
 merged_data = pols %>% 
   left_join(snp, 
-    by = c("year", "month") 
-  ) %>% 
-  left_join(
-    unemployment,
-    by = c("year", "month")
-    )
+            by = c("year", "month")) %>%
+  left_join(unemployment, 
+            by = c("year", "month"))
 ```
 
 ##### Here is a short description of the dataset: 
@@ -170,7 +167,7 @@ merged_data = pols %>%
 # Problem 3: 
 Loading the popular baby names dataset. Recoding the inconsistent ethinicity observations. Fixing the case structure of string varaibles. Removing duplicates using the distinct() function. 
 
-```{r}
+```{r message=FALSE}
 popular_baby_names = read_csv("./Data/Popular_Baby_Names.csv") %>%
   janitor::clean_names() %>% 
   mutate(ethnicity = recode(ethnicity, "ASIAN AND PACI" = "ASIAN AND PACIFIC ISLANDER",

@@ -81,9 +81,9 @@ precipitation_full = full_join(precipitation_2017, precipitation_2018) %>%
 
 ---------------------------------------------------------------------------------------------
 
-## Loading pols, snp and unemployment datasets...
+## Loading `pols`, `snp` and `unemployment` datasets...
 
-### For the pols dataset:
+### For the `pols` dataset:
 The month variable is separated into "year", "month" and "day". A new variable "President" has been added taking values from prez_dem and prez_gop. The values of the month variable have been converted to characters. Day variable has been removed. 
 
 
@@ -103,7 +103,13 @@ pols = read_csv("./Data/fivethirtyeight_datasets/pols-month.csv") %>%
   select(-day)
 ```
 
-### For the snp dataset:
+#####  Here is a short description of the dataset: 
+* There are **`r nrow(pols)` observations** and **`r ncol(pols)` columns**.
+* The range of years is from **`r min(pull(pols, year))` to `r max(pull(pols, year))`**.
+* It contains the following variables: **`r colnames(pols)`**.
+
+
+### For the `snp` dataset:
 The date variable is separated into "month", "day" and "year". The values of the month variable have been converted to characters. The year and month variables have been rearranged. Day variable has been removed. 
 
 ```{r}
@@ -115,7 +121,12 @@ snp = read_csv("./Data/fivethirtyeight_datasets/snp.csv") %>%
   select(year, month, -day, everything())
 ```
 
-### For the unemployment dataset:
+##### Here is a short description of the dataset: 
+* There are **`r nrow(snp)` observations** and **`r ncol(snp)` columns**.
+* The range of years is from **`r min(pull(snp, year))` to `r max(pull(snp, year))`**.
+* It contains the following variables: **`r colnames(snp)`**.
+
+### For the `unemployment` dataset:
 A new variable month has been created taking values from the Jan to Dec column names. The month variable has been formatted to character variable using month,name. Year variable has been converted to integer.  
 
 ```{r}
@@ -130,6 +141,13 @@ unemployment = read_csv("./Data/fivethirtyeight_datasets/unemployment.csv") %>%
   janitor::clean_names()
 ```
 
+##### Here is a short description of the dataset: 
+* There are **`r nrow(unemployment)` observations** and **`r ncol(unemployment)` columns**.
+* The range of years is from **`r min(pull(unemployment, year))` to `r max(pull(unemployment, year))`**.
+* It contains the following variables: **`r colnames(unemployment)`**.
+
+----------------------------------------------------------------------------------------------
+
 The following code chunk merges `snp` into `pols` and then `unexmployment` into the result. 
 
 ```{r}
@@ -143,7 +161,7 @@ merged_data = pols %>%
     )
 ```
 
-## Here is a short description of the dataset: 
+##### Here is a short description of the dataset: 
 ###### For the merged dataset:
 * There are **`r nrow(merged_data)` observations** and **`r ncol(merged_data)` columns**.
 * The range of years is from **`r min(pull(merged_data, year))` to `r max(pull(merged_data, year))`**.

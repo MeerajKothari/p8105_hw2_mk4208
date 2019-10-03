@@ -32,6 +32,12 @@ trashwheel =
   mutate(sports_balls = as.integer(sports_balls))
 ```
 
+## Here is a short description of the dataset: 
+###### For the Mr. Trash Wheel dataset, 
+* There are **`r nrow(trashwheel)` observations**.
+* It contains the following variables: **`r colnames(trashwheel)`**.
+* The median number of sports balls in a dumpster in 2017 was **`r median(pull(filter(trashwheel, year == "2017"), sports_balls))`**.
+
 ## Precipitation data for 2018:
 Rows without precipitation data have been omitted. 
 Year variable has been added.
@@ -67,16 +73,19 @@ precipitation_full = full_join(precipitation_2017, precipitation_2018) %>%
   mutate(month = month.name[month])
 ```
 
-## Here is a short description of the 2 datasets: 
+## Here is a short description of the dataset: 
 ###### For the precipitation dataset:
 * There are **`r nrow(precipitation_full)` observations**.
 * It contains the following variables: **`r colnames(precipitation_full)`**.
 * The total precipitation in the year 2018 was **`r sum(pull(precipitation_2018, total))`**. 
 
-###### For the Mr. Trash Wheel dataset, 
-* There are **`r nrow(trashwheel)` observations**.
-* It contains the following variables: **`r colnames(trashwheel)`**.
-* The median number of sports balls in a dumpster in 2017 was **`r median(pull(filter(trashwheel, year == "2017"), sports_balls))`**.
+---------------------------------------------------------------------------------------------
+
+## Loading pols, snp and unemployment datasets...
+
+### For the pols dataset:
+The month variable is separated into "year", "month" and "day". A new variable "President" has been added taking values from prez_dem and prez_gop. The values of the month variable have been converted to characters. Day variable has been removed. 
+
 
 ```{r}
 pols = read_csv("./Data/fivethirtyeight_datasets/pols-month.csv") %>% 
@@ -92,14 +101,24 @@ pols = read_csv("./Data/fivethirtyeight_datasets/pols-month.csv") %>%
   ) %>% 
   mutate(month = month.name[month]) %>% 
   select(-day)
+```
 
+### For the snp dataset:
+The date variable is separated into "month", "day" and "year". The values of the month variable have been converted to characters. The year and month variables have been rearranged. Day variable has been removed. 
+
+```{r}
 snp = read_csv("./Data/fivethirtyeight_datasets/snp.csv") %>% 
   separate(date, 
            c("month", "day", "year"),
            convert = TRUE) %>%
   mutate(month = month.name[month]) %>% 
   select(year, month, -day, everything())
+```
 
+### For the unemployment dataset:
+A new variable month has been created taking values from the Jan to Dec column names. The month variable has been formatted to character variable using month,name. Year variable has been converted to integer.  
+
+```{r}
 unemployment = read_csv("./Data/fivethirtyeight_datasets/unemployment.csv") %>% 
   pivot_longer(Jan:Dec, 
     names_to = "month",
@@ -109,7 +128,11 @@ unemployment = read_csv("./Data/fivethirtyeight_datasets/unemployment.csv") %>%
   mutate(month = month.name[month]) %>%
   mutate(Year = as.integer(Year)) %>%
   janitor::clean_names()
+```
 
+The following code chunk merges `snp` into `pols` and then `unexmployment` into the result. 
+
+```{r}
 merged_data = pols %>% 
   left_join(snp, 
     by = c("year", "month") 
@@ -119,6 +142,12 @@ merged_data = pols %>%
     by = c("year", "month")
     )
 ```
+
+## Here is a short description of the dataset: 
+###### For the merged dataset:
+* There are **`r nrow(merged_data)` observations** and **`r ncol(merged_data)` columns**.
+* The range of years is from **`r min(pull(merged_data, year))` to `r max(pull(merged_data, year))`**.
+* It contains the following variables: **`r colnames(merged_data)`**.
 
 # Problem 3: 
 Loading the popular baby names dataset. Recoding the inconsistent ethinicity observations. Fixing the case structure of string varaibles. Removing duplicates using the distinct() function. 

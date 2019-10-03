@@ -176,7 +176,7 @@ popular_baby_names %>%
             hjust=1, 
             vjust=1, 
             check_overlap = TRUE,
-            size = 2.4)
+            size = 1)
 ```
 
 

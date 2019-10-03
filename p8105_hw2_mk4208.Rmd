@@ -93,14 +93,14 @@ pols = read_csv("./Data/fivethirtyeight_datasets/pols-month.csv") %>%
     c("year", "month", "day"), 
     convert = TRUE) %>% 
   mutate(prez_dem = recode(prez_dem, '1' = "dem")) %>% 
-  mutate(prez_gop = recode(prez_gop, '1' = "gop")) %>% 
+  mutate(prez_gop = recode(prez_gop, '1' = "gop", '2' = "gop")) %>% 
   pivot_longer(
-    c("prez_dem", "prez_gop"), 
+    cols = c("prez_dem", "prez_gop"), 
     values_to = "president", 
     values_drop_na = TRUE
   ) %>% 
   mutate(month = month.name[month]) %>% 
-  select(-day)
+  select(-day, -name)
 ```
 
 #####  Here is a short description of the dataset: 

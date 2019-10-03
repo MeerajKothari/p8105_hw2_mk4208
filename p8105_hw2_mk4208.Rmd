@@ -171,12 +171,12 @@ popular_baby_names %>%
          ethnicity == "white non hispanic", 
          year_of_birth == 2016) %>%
   ggplot(aes(x = rank, y = count)) +
-  geom_point(colour="pink") + 
+  geom_point(colour="blue") + 
   geom_text(aes(label=childs_first_name),
             hjust=1, 
             vjust=1, 
             check_overlap = TRUE,
-            size = 1)
+            size = 2.4)
 ```
 
 

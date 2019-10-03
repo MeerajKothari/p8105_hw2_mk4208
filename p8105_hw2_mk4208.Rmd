@@ -1,6 +1,8 @@
 ---
 title: "p8105_hw2_mk4208"
 output: github_document
+author: Meeraj Kothari 
+date: 3/10/2019
 ---
 
 ```{r setup, include=FALSE}
@@ -15,16 +17,15 @@ library(readxl)
 ```
 
 ## Problem 1 
-
 Importing Mr. Trash Wheel sheet and omitting non-data entries. 
 Rows that do not include dumpster-specific data have been omitted. 
 Number of sports balls have been rounded the nearest integer and the result has been converted to a numeric variable. 
 
 ```{r}
 trashwheel =
-  read_excel(path="./Data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", 
-                        sheet = 1,
-                        range ="A2:N338") %>% 
+  read_excel(path="./Data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+             sheet = 1,
+             range ="A2:N408") %>% 
   janitor::clean_names() %>% 
   drop_na(dumpster) %>% 
   mutate(sports_balls = round(sports_balls, digits = 0)) %>% 
@@ -67,11 +68,13 @@ precipitation_full = full_join(precipitation_2017, precipitation_2018) %>%
 ```
 
 # Here is a short description of the 2 datasets: 
-For the precipitation dataset, there are `r nrow(precipitation_full)` observations. It contains the following variables: `r colnames(precipitation_full)`.
-The total precipitation in the year 2018 was `r sum(pull(precipitation_2018, total))`. 
+* For the precipitation dataset, there are **`r nrow(precipitation_full)` observations**.
+* It contains the following variables: **`r colnames(precipitation_full)`**.
+* The total precipitation in the year 2018 was **`r sum(pull(precipitation_2018, total))`**. 
 
-For the Mr. Trash Wheel dataset, there are `r nrow(trashwheel)` observations. It contains the following variables: `r colnames(trashwheel)`.
-The median number of sports balls in a dumpster in 2017 was `r median(pull(filter(trashwheel, year == "2017"), sports_balls))`.
+* For the Mr. Trash Wheel dataset, there are **`r nrow(trashwheel)` observations**.
+* It contains the following variables: **`r colnames(trashwheel)`**.
+* The median number of sports balls in a dumpster in 2017 was **`r median(pull(filter(trashwheel, year == "2017"), sports_balls))`**.
 
 ```{r}
 pols = read_csv("./Data/fivethirtyeight_datasets/pols-month.csv") %>% 
@@ -115,7 +118,8 @@ merged_data = pols %>%
     )
 ```
 
-Problem 3 
+# Problem 3: 
+Loading the popular baby names dataset. Recoding the inconsistent ethinicity observations. Fixing the case structure of string varaibles. Removing duplicates using the distinct() function. 
 
 ```{r}
 popular_baby_names = read_csv("./Data/Popular_Baby_Names.csv") %>%
@@ -123,38 +127,54 @@ popular_baby_names = read_csv("./Data/Popular_Baby_Names.csv") %>%
   mutate(ethnicity = recode(ethnicity, "ASIAN AND PACI" = "ASIAN AND PACIFIC ISLANDER",
                             "WHITE NON HISP" = "WHITE NON HISPANIC",
                             "BLACK NON HISP" = "BLACK NON HISPANIC")) %>% 
-  mutate(childs_first_name = str_to_lower(childs_first_name)) %>% 
+  mutate(childs_first_name = str_to_lower(childs_first_name),
+         ethnicity = str_to_lower(ethnicity), 
+         gender = str_to_lower(gender)) %>% 
   distinct()
+```
 
+Following table shows the rank in popularity of the name "Olivia" as a female baby name over time. Rows contain ethnicities and columns contain year. 
+
+```{r} 
 popular_baby_names %>% 
   filter(childs_first_name == "olivia") %>% 
   select(-count) %>%
   pivot_wider(
     names_from = "year_of_birth",
     values_from = "rank"
-  ) 
+  ) %>% 
+  knitr::kable()
 ```
+
+Follwing table shows the most popular name among male children over time.
 
 ```{r}
 popular_baby_names %>% 
-  filter(gender == "MALE") %>% 
+  filter(gender == "male") %>% 
   filter(rank == 1) %>%
   select(-count) %>% 
   pivot_wider(
     names_from = "year_of_birth",
     values_from = "childs_first_name"
-  ) 
+  ) %>% 
+  knitr::kable()
 ```
 
+##### For male, white non-hipsanic children born in 2016: 
+Following is a scatter plot showing the number of children with a name (y axis) against the rank in popularity of that name (x axis) 
+
 ```{r}
-scatterplot = popular_baby_names %>% 
-  filter(gender ==  "MALE", 
-         ethnicity == "WHITE NON HISPANIC", 
+popular_baby_names %>% 
+  filter(gender ==  "male", 
+         ethnicity == "white non hispanic", 
          year_of_birth == 2016) %>%
   ggplot(aes(x = rank, y = count)) +
-  geom_point()
-
-print(scatterplot) 
+  geom_point(colour="purple") + 
+  geom_text(aes(label=childs_first_name),
+            hjust=1, 
+            vjust=1, 
+            check_overlap = TRUE,
+            size = 4)
 ```
 
 
